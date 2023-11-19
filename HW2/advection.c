@@ -161,7 +161,7 @@ void initialCondition(solver_t *solver)
   double *q = solver->q;
 
   // Velocity field
-  solver->u = (double *)malloc(msh->Nnodes * sizeof(double));
+  solver->u = (double *)malloc(2*msh->Nnodes * sizeof(double));
   double *u = solver->u;
 
   // Velocity field
