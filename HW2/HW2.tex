@@ -1,0 +1,145 @@
+\documentclass[a4paper,12pt]{article} % This defines the style of your paper
+
+% We usually use the article type. The additional parameters are the format of the paper you want to print it on and the standard font size. For us this is a4paper and 12pt.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 2. Packages
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Packages are libraries of commands that LaTeX can call when compiling the document. With the specialized commands you can customize the formatting of your document.
+% If the packages we call are not installed yet, TeXworks will ask you to install the necessary packages while compiling.
+
+% First, we usually want to set the margins of our document. For this we use the package geometry. We call the package with the \usepackage command. The package goes in the {}, the parameters again go into the [].
+\usepackage[top = 2.5cm, bottom = 2.5cm, left = 2.5cm, right = 2.5cm]{geometry} 
+
+% Unfortunately, LaTeX has a hard time interpreting German Umlaute. The following two lines and packages should help. If it doesn't work for you please let me know.
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+% The following two packages - multirow and booktabs - are needed to create nice looking tables.
+\usepackage{multirow} % Multirow is for tables with multiple rows within one cell.
+\usepackage{booktabs} % For even nicer tables.
+
+% As we usually want to include some plots (.pdf files) we need a package for that.
+\usepackage{graphicx} 
+
+% The default setting of LaTeX is to indent new paragraphs. This is useful for articles. But not really nice for homework problem sets. The following command sets the indent to 0.
+\usepackage{setspace}
+\setlength{\parindent}{0in}
+
+% Package to place figures where you want them.
+\usepackage{float}
+
+% The fancyhdr package let's us create nice headers.
+\usepackage{fancyhdr}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 3. Header (and Footer)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% To make our document nice we want a header and number the pages in the footer.
+
+\pagestyle{fancy} % With this command we can customize the header style.
+
+\fancyhf{} % This makes sure we do not have other information in our header or footer.
+
+\lhead{\footnotesize QM: Homework 1}% \lhead puts text in the top left corner. \footnotesize sets our font to a smaller size.
+
+%\rhead works just like \lhead (you can also use \chead)
+\rhead{\footnotesize Lastname 1, Lastname 2 (\& Lastname 3)} %<---- Fill in your lastnames.
+
+% Similar commands work for the footer (\lfoot, \cfoot and \rfoot).
+% We want to put our page number in the center.
+\cfoot{\footnotesize \thepage} 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 4. Your document
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Now, you need to tell LaTeX where your document starts. We do this with the \begin{document} command.
+% Like brackets every \begin{} command needs a corresponding \end{} command. We come back to this later.
+
+\begin{document}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Title section of the document
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% For the title section we want to reproduce the title section of the Problem Set and add your names.
+
+\thispagestyle{empty} % This command disables the header on the first page. 
+
+\begin{tabular}{p{15.5cm}} % This is a simple tabular environment to align your text nicely 
+{\large \bf Special Topics in Mechanical Engineering: Applied Scientific Programming}\\
+Middle East Technical University\\ Fall 2023\\ Coding in C\\
+\hline % \hline produces horizontal lines.
+\\
+\end{tabular} % Our tabular environment ends here.
+
+\vspace*{0.3cm} % Now we want to add some vertical space in between the line and our title.
+
+\begin{center} % Everything within the center environment is centered.
+	{\Large \bf Homework 2} % <---- Don't forget to put in the right number
+	\vspace{2mm}
+	
+        % YOUR NAMES GO HERE
+	{\bf Furkan Çanga - 2168938  \&  Bertan Özbay - 2378545} % <---- Fill in your names here!
+		
+\end{center}  
+
+\vspace{0.4cm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Up until this point you only have to make minor changes for every week (Number of the homework). Your write up essentially starts here.
+
+In homework 2, our task was to complete parts of an advection solver, which could be described as a numerical method used to solver partial differential equations that describe physical phenomena.
+
+For this purpose, we used the already implemented fourth order Runge-Kutta (RK4) method with finite difference methods. In the main part of the code one can see that RhsQ function is called to iterate for each time step. 
+
+\vspace{12pt}
+\vspace{12pt}
+
+{\Large \bf \textbf{\textit{1-Functions and Simple Explanations}}}
+\vspace{12pt}
+\vspace{12pt}
+
+{\Large \textbf{RhsQ function}}
+
+In RhsQ function firstly,  we defined two for functions to loop over the nodes. After that, for each node we calculated the indices of neighboring node elements with N2N. Thirdly, we have extracted node properties u, v, x, y, q for each nodes. Then, we have calculated partial derivatives with respect to x and y with the help of given formulation.  Finally, we have computed Right Hand Side of the advection equation and updated current q  with respect to time step and its older value.
+
+\vspace{12pt}
+
+{\Large \textbf{initialCondition function}}
+
+In this function, we have implemented the given 3 equations for each node one by one. For this purpose, we used two for loops to iterate over the domain. However, we have stored u and v in a single array namely u.
+
+\vspace{12pt}
+
+{\Large \textbf{createMesh function}}
+
+To create mesh, we first need to read values from input.dat file, we used readInputFile function to do this operation. Then, we have calculated mesh node number and allocated needed memory for x and y. After this we have calculated the distance between nodes for each node and stored their coordinates inside x and y arrays. The part below is again an iteration, but this time is for node to node connectivity. The four if statements just below the connectivity equations are for the cases of boundary nodes as when we are trying to compute a value for a boundary, we do not have a node in each direction.
+
+\vspace{12pt}
+
+{\Large \textbf{readInputFile function}}
+
+For this function, we have implemented the function such that, we can find and define the values as double variables from input.dat file.
+
+\vspace{12pt}
+
+\newpage
+{\Large \bf \textbf{\textit{2-Results}}}
+
+\vspace{12pt}
+
+We could not post our results to here as our computers could not handle the workload that comes from the visualization of this code... Please note that we have run the program for 6 hours before it crashed. However, we think that .csv files are somewhat near to correct. We have sensible results in terms of dq and q values.  Please provide feedback, if you could draw the end results.
+
+\end{document}
