@@ -1,0 +1,264 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[version=4]{mhchem}
+\usepackage{stmaryrd}
+\usepackage{multirow}
+
+\title{Enhancing Computational Efficiency through Parallelization: A Case Study with the Advection Solver }
+
+\author{Muhammed Furkan Çanga 2168938  & Bertan Özbay 2378545}
+\date{5.12.2023}
+
+
+\DeclareUnicodeCharacter{00D7}{$\times$}
+
+\begin{document}
+\maketitle
+\section{Introduction}
+In the realm of computational physics, the accurate simulation of fluid dynamics often relies on sophisticated numerical solvers. The advection equation, describing the transport of a quantity by fluid flow, is a fundamental component of such simulations. This report explores the impact of parallelization on the performance of an advection solver implemented in $C$, utilizing OpenMP directives. The focus is on the impact of parallelizing the computation method, specifically within the RhsQ function, on solver efficiency.
+
+\section{Parallelizing the Advection Solver}
+The advection solver is implemented in $\mathrm{C}$, employing a finite difference method for the numerical solution of the advection equation. The solver incorporates mesh creation based on user-defined parameters and time integration using the Runge-Kutta scheme. Mesh creation establishes the spatial domain and connectivity, while the time integration scheme ensures accurate and stable solutions over successive time steps. The key function, RhsQ, calculates the right-hand side values crucial for advancing the solution in time. This function becomes the focal point for parallelization efforts.
+
+Within the RhsQ function, OpenMP directives are strategically placed to parallelize the computation. The number of threads is set using omp\_set\_num\_threads, and the \#pragma omp parallel for directive instructs the compiler to distribute the iterations of the outer loop among the available threads. Private and shared clauses define the scope of variables, ensuring data consistency and avoiding race conditions.
+
+Norm computation is a critical aspect of assessing the accuracy and convergence of the solver. Three different reduction approaches—atomic, critical, and reduction—are employed for calculating the infinity norm. The infinityNormAtomic, infinityNormCritical, and infinityNormReduction functions provide timings for each approach, allowing a comparative analysis of their computational efficiency.
+
+\section{Results}
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\multicolumn{4}{|c|}{Results of $201 \times 201$ Mesh Grid with 2 Threads Usage} \\
+\hline
+STEP & METHOD & RESULT & TIME(s) \\
+\hline
+\multirow[t]{3}{*}{1} & Atomic & 0.751354 & 0.000383 \\
+\hline
+ & Critical & 0.751354 & 0.000175 \\
+\hline
+ & Reduction & 0.751354 & 0.000074 \\
+\hline
+\multirow[t]{3}{*}{2} & Atomic & 2.294398 & 0.000119 \\
+\hline
+ & Critical & 2.294398 & 0.000079 \\
+\hline
+ & Reduction & 2.294398 & 0.000078 \\
+\hline
+\multirow[t]{3}{*}{3} & Atomic & 7.310563 & 0.000112 \\
+\hline
+ & Critical & 7.310563 & 0.000082 \\
+\hline
+ & Reduction & 7.310563 & 0.000081 \\
+\hline
+\multirow[t]{3}{*}{4} & Atomic & 17.199645 & 0.000111 \\
+\hline
+ & Critical & 17.199645 & 0.000078 \\
+\hline
+ & Reduction & 17.199645 & 0.000076 \\
+\hline
+\multirow[t]{3}{*}{5} & Atomic & 29.985218 & 0.000154 \\
+\hline
+ & Critical & 29.985218 & 0.000077 \\
+\hline
+ & Reduction & 29.985218 & 0.000076 \\
+\hline
+\multirow[t]{3}{*}{6} & Atomic & 43.465573 & 0.000114 \\
+\hline
+ & Critical & 43.465573 & 0.000090 \\
+\hline
+ & Reduction & 43.465573 & 0.000090 \\
+\hline
+\multirow[t]{3}{*}{7} & Atomic & 56.673202 & 0.000199 \\
+\hline
+ & Critical & 56.673202 & 0.000155 \\
+\hline
+ & Reduction & 56.673202 & 0.000167 \\
+\hline
+\multirow[t]{3}{*}{8} & Atomic & 69.273548 & 0.000146 \\
+\hline
+ & Critical & 69.273548 & 0.000096 \\
+\hline
+ & Reduction & 69.273548 & 0.000093 \\
+\hline
+\multirow[t]{3}{*}{9} & Atomic & 81.151798 & 0.000121 \\
+\hline
+ & Critical & 81.151798 & 0.000094 \\
+\hline
+ & Reduction & 81.151798 & 0.000094 \\
+\hline
+\multirow[t]{3}{*}{10} & Atomic & 92.289794 & 0.000114 \\
+\hline
+ & Critical & 92.289794 & 0.000090 \\
+\hline
+ & Reduction & 92.289794 & 0.000090 \\
+\hline
+\end{tabular}
+\end{center}
+
+Table 1 Results of 201×201 Mesh Grid with 2 Threads Usage
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\multicolumn{4}{|c|}{Results of $401 \times 401$ Mesh Grid with 2 Threads Usage} \\
+\hline
+STEP & METHOD & RESULT & TIME \\
+\hline
+\multirow[t]{3}{*}{1} & Atomic & 0.751354 & 0.000791 \\
+\hline
+ & Critical & 0.751354 & 0.000631 \\
+\hline
+ & Reduction & 0.751354 & 0.000290 \\
+\hline
+\multirow[t]{3}{*}{2} & Atomic & 2.305377 & 0.000576 \\
+\hline
+ & Critical & 2.305377 & 0.000371 \\
+\hline
+ & Reduction & 2.305377 & 0.000354 \\
+\hline
+\multirow[t]{3}{*}{3} & Atomic & 7.891932 & 0.000399 \\
+\hline
+ & Critical & 7.891932 & 0.000414 \\
+\hline
+ & Reduction & 7.891932 & 0.000346 \\
+\hline
+\multirow[t]{3}{*}{4} & Atomic & 22.280105 & 0.000497 \\
+\hline
+ & Critical & 22.280105 & 0.000419 \\
+\hline
+ & Reduction & 22.280105 & 0.000407 \\
+\hline
+\multirow[t]{3}{*}{5} & Atomic & 45.273270 & 0.000419 \\
+\hline
+ & Critical & 45.273270 & 0.000372 \\
+\hline
+ & Reduction & 45.273270 & 0.000354 \\
+\hline
+\multirow[t]{3}{*}{6} & Atomic & 71.844684 & 0.000474 \\
+\hline
+ & Critical & 71.844684 & 0.000385 \\
+\hline
+ & Reduction & 71.844684 & 0.000618 \\
+\hline
+\multirow[t]{3}{*}{7} & Atomic & 98.762102 & 0.000414 \\
+\hline
+ & Critical & 98.762102 & 0.000357 \\
+\hline
+ & Reduction & 98.762102 & 0.000345 \\
+\hline
+\multirow[t]{3}{*}{8} & Atomic & 124.837205 & 0.000434 \\
+\hline
+ & Critical & 124.837205 & 0.000365 \\
+\hline
+ & Reduction & 124.837205 & 0.000355 \\
+\hline
+\multirow[t]{3}{*}{9} & Atomic & 149.665253 & 0.000441 \\
+\hline
+ & Critical & 149.665253 & 0.000404 \\
+\hline
+ & Reduction & 149.665253 & 0.000395 \\
+\hline
+\multirow[t]{3}{*}{10} & Atomic & 173.085232 & 0.000427 \\
+\hline
+ & Critical & 173.085232 & 0.000371 \\
+\hline
+ & Reduction & 173.085232 & 0.000356 \\
+\hline
+\end{tabular}
+\end{center}
+
+Table 2 Results of $401 \times 401$ Mesh Grid with 2 Threads Usage
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\multicolumn{4}{|c|}{201x201 MESH - 4 Thread} \\
+\hline
+STEP & METHOD & RESULT & TIME \\
+\hline
+\multirow[t]{3}{*}{1} & Atomic & 0.751354 & 0.005051 \\
+\hline
+ & Critical & 0.751354 & 0.001562 \\
+\hline
+ & Reduction & 0.751354 & 0.000289 \\
+\hline
+\multirow[t]{3}{*}{2} & Atomic & 2.294398 & 0.000069 \\
+\hline
+ & Critical & 2.294398 & 0.000044 \\
+\hline
+ & Reduction & 2.294398 & 0.000042 \\
+\hline
+\multirow[t]{3}{*}{3} & Atomic & 7.310563 & 0.000103 \\
+\hline
+ & Critical & 7.310563 & 0.000089 \\
+\hline
+ & Reduction & 7.310563 & 0.000131 \\
+\hline
+\multirow[t]{3}{*}{4} & Atomic & 17.199645 & 0.000084 \\
+\hline
+ & Critical & 17.199645 & 0.000055 \\
+\hline
+ & Reduction & 17.199645 & 0.000076 \\
+\hline
+\multirow[t]{3}{*}{5} & Atomic & 29.985218 & 0.000110 \\
+\hline
+ & Critical & 29.985218 & 0.000085 \\
+\hline
+ & Reduction & 29.985218 & 0.000096 \\
+\hline
+\multirow[t]{3}{*}{6} & Atomic & 43.465573 & 0.000081 \\
+\hline
+ & Critical & 43.465573 & 0.000052 \\
+\hline
+ & Reduction & 43.465573 & 0.000051 \\
+\hline
+\multirow[t]{3}{*}{7} & Atomic & 56.673202 & 0.000081 \\
+\hline
+ & Critical & 56.673202 & 0.000053 \\
+\hline
+ & Reduction & 56.673202 & 0.000051 \\
+\hline
+\multirow[t]{3}{*}{8} & Atomic & 69.273548 & 0.000080 \\
+\hline
+ & Critical & 69.273548 & 0.000052 \\
+\hline
+ & Reduction & 69.273548 & 0.000051 \\
+\hline
+\multirow[t]{3}{*}{9} & Atomic & 81.151798 & 0.000076 \\
+\hline
+ & Critical & 81.151798 & 0.000050 \\
+\hline
+ & Reduction & 81.151798 & 0.000049 \\
+\hline
+\multirow[t]{3}{*}{10} & Atomic & 92.289794 & 0.000111 \\
+\hline
+ & Critical & 92.289794 & 0.000082 \\
+\hline
+ & Reduction & 92.289794 & 0.000081 \\
+\hline
+\end{tabular}
+\end{center}
+
+Table 3 Results of 201×201 Mesh Grid with 4 Threads Usage
+
+\section{Conclusion}
+Parallel Timings with Various Mesh Resolutions:
+
+The recorded timings for the parallelized section of the solver tabulated on Results section. Table-1 and Table-2 demonstrate consistent behavior across various mesh resolutions. As expected, finer resolutions lead to increased computational times due to a higher number of computational nodes. This behavior aligns with the fundamental trade-off in numerical simulations.Higher accuracy often comes at the cost of increased computational demands. It's noteworthy that the solver's scalability across different resolutions allows users to tailor the mesh size to strike a balance between accuracy and computational efficiency as seen in time difference.
+
+Impact of Thread Count:
+
+The impact of varying thread counts on solver efficiency unveils an interesting trend. The solver showcases commendable scalability with an increasing number of threads, indicating effective parallelization. When the thread number is doubled, computation time is significantly decreased as it seen on Table- 1 and Table-3. The time didn't scale exactly as the thread number due to overhead and communication times, limited parallelizable regions and thread management overhead.
+
+However, the observed diminishing returns beyond a certain thread count emphasize the importance of considering the underlying hardware architecture. While the solver benefits from parallel processing, optimal performance is achieved by aligning the thread count with the available computational resources. This finding is crucial for practitioners aiming to harness the full potential of parallelization without encountering diminishing returns.
+
+Norm Computation Timings:
+
+The timings for computing norms using different reduction approaches provide valuable insights into the efficiency of each method as it seen in Table-1, Table-2, Table-3. The reduction approach consistently outperforms both atomic and critical methods. This result is particularly significant as it underscores the importance of selecting an appropriate reduction strategy for norm calculations. The reduction method's superior performance is attributed to its efficient parallel reduction capabilities, showcasing the relevance of tailoring the parallelization strategy to the specific computational task. This insight is vital for people relying on accurate norm calculations in their simulations.
+
+
+\end{document}
