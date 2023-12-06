@@ -34,6 +34,9 @@ typedef struct{
   void RhsQ(solver_t *solver, tstep_t *tstep, int stage);
   void solverPlot(char *fileName, mesh_t *msh, double *Q);
   double readInputFile(char *fileName, char *tag);
+  double infinityNormAtomic(solver_t *solver);
+  double infinityNormCritical(solver_t *solver);
+  double infinityNormReduction(solver_t *solver);
  
 
 #endif

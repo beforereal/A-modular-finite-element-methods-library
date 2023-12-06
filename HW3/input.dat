@@ -8,7 +8,7 @@
 
 #Time step size
 [DT]
-1e-5
+1e-4
 
 # Minumum x coordinate
 [XMIN]
