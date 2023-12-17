@@ -1,0 +1,99 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[version=4]{mhchem}
+\usepackage{stmaryrd}
+
+\title{HW4\_Report}
+
+
+\author{@furkancanga}
+\date{}
+
+
+\begin{document}
+\maketitle
+
+
+\section*{MPI-Based Parallel Heat Equation Solver }
+\section{Introduction}
+The primary goal of this project is to develop a scalable and efficient parallel solver for the onedimensional heat equation. Parallelization is achieved using the Message Passing Interface (MPI) standard, allowing the code to run on distributed memory systems. This report outlines the details of the implementation, focusing on the MPI-based approach. Additionally, we incorporate OpenMP for shared memory parallelization, aiming to demonstrate the performance difference of OPENMP and MPI in different configurations.
+
+\section{Implementation Details}
+\subsection{MPI-Based Parallelization}
+Our MPI-based parallelization strategy employs domain decomposition to distribute the computational workload among processors efficiently. In the provided code, each processor is responsible for solving a local portion of the one-dimensional domain. The domain is evenly divided among the processors, and each processor computes the solution independently.
+
+To facilitate communication between processors, point-to-point MPI messages are utilized. At each time step, the boundary values of the local domain are exchanged with neighboring processors. For example, the MPI\_Send and MPI\_Recv functions are used to send the rightmost boundary value (q[n]) to the next processor and receive the corresponding leftmost boundary value from the previous processor.
+
+This approach ensures that each processor has the necessary boundary information to update its local solution. By synchronizing at each time step, processors collaborate to advance the simulation in a parallelized fashion, leveraging the strengths of MPI for distributed memory systems.
+
+\subsection{OpenMP Parallelization}
+While MPI provides a robust framework for distributed memory parallelization, there is potential for further optimization through shared memory parallelization using OpenMP. To experiment with shared-memory parallelism, we have developed a separate version of the code utilizing OpenMP directives. This version divides the computational workload among multiple threads within each processor, harnessing the power of multi-core architectures.
+
+The OpenMP-enabled code incorporates parallelization at key computational loops, specifically focusing on the time-stepping loop. The omp\_set\_num\_threads function controls the number of threads for parallel execution, allowing users to adjust the degree of parallelism. The parallel region, marked by \#pragma omp parallel for, parallelizes the loop, distributing the workload efficiently among threads. Initial testing indicates promising results with reduced execution times, especially when the number of threads matches the available cores. This suggests that shared memory parallelization has the potential to significantly enhance performance on multi-core systems.
+
+\section{Results}
+To evaluate the performance and scalability of our MPI-based parallel heat equation solver, experiments were conducted with varying numbers of nodes $(2,3,4,5,6)$ and processor counts (50, $100,500,1000)$. Each experiment aimed to assess the solver's behavior under different configurations, shedding light on the impact of increased parallelism on execution times.
+
+The table below presents key performance metrics obtained from the experiments:
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+MPI & \multicolumn{4}{l|}{Nodes per Processors} \\
+\hline
+Processors & 50 & 100 & 500 & 1000 \\
+\hline
+2.00 & 0.000232 & 0.001417 & 0.162619 & 1.386186 \\
+\hline
+3.00 & 0.000694 & 0.004753 & 0.361184 & 2.845256 \\
+\hline
+4.00 & 0.005794 & 0.022621 & 0.680412 & 6.560368 \\
+\hline
+5.00 & 0.019580 & 0.041211 & 1.135689 & 8.764735 \\
+\hline
+6.00 & 0.103043 & 0.074712 & 1.684955 & 13.794835 \\
+\hline
+\end{tabular}
+\end{center}
+
+Table 1 MPI Execution Times with Different Nodes and Processors Number
+
+The observed results indicate a clear relationship between the number of nodes, processors, and the elapsed time. As the number of nodes or processors increases, the overall execution time also grows. This behavior is consistent with the expected overhead associated with inter-process communication and synchronization in distributed memory systems.
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+OPENMP & \multicolumn{4}{|c|}{Number of Nodes} \\
+\hline
+Processors & 50 & 100 & 500 & 1000 \\
+\hline
+2.00 & 0.000689 & 0.001032 & 0.087663 & 0.227625 \\
+\hline
+3.00 & 0.000389 & 0.000958 & 0.057355 & 0.172178 \\
+\hline
+4.00 & 0.000629 & 0.001312 & 0.094654 & 0.195367 \\
+\hline
+5.00 & 0.000815 & 0.002090 & 0.024929 & 0.177467 \\
+\hline
+6.00 & 0.000938 & 0.002750 & 0.049768 & 0.252231 \\
+\hline
+\end{tabular}
+\end{center}
+
+Table 2 OPENMP Execution Times with Different Nodes and Processors Number
+
+\section{Conclusion}
+In summary, our MPI-based parallel heat equation solver demonstrates scalability across different node and processor configurations. The longer execution times with increased nodes and processors underscore the significance of managing communication overhead effectively. The planned integration of OpenMP is anticipated to mitigate this challenge by leveraging shared memory parallelism. The ongoing work aims to achieve a balanced approach that harnesses the strengths of both MPI and OpenMP, ensuring optimal performance across diverse computing environments.
+
+In the OpenMP parallelization of the heat equation solver, we observed significant improvements in computation time compared to the MPI version. The implementation efficiently utilizes sharedmemory parallelism through OpenMP directives, allowing for concurrent execution of computations. The impact of varying the number of processors is particularly noteworthy.
+
+For smaller node counts, the influence of the processor count on computation time is less pronounced. However, as the number of nodes increases, scaling with additional processors becomes more prominent. This suggests that the OpenMP parallelization is effective in leveraging multicore processors, showcasing improved performance as the computational workload grows.
+
+Furthermore, the overall computation time achieved with OpenMP surpasses that of the MPI version, indicating the effectiveness of shared-memory parallelism in the context of this specific problem. These results emphasize the suitability of OpenMP for enhancing the performance of computational tasks, especially on systems with a higher number of processing cores. As we delve further into parallel computing, fine-tuning the balance between node count and processor count becomes crucial for optimizing performance.
+
+
+\end{document}
