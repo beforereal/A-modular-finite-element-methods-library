@@ -1,0 +1,92 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[version=4]{mhchem}
+\usepackage{stmaryrd}
+\usepackage{hyperref}
+\usepackage{geometry} % To set page margins
+\usepackage{array}    % For specifying column width
+\usepackage{makecell} % For multi-line cells
+\hypersetup{colorlinks=true, linkcolor=blue, filecolor=magenta, urlcolor=cyan,}
+\urlstyle{same}
+
+\title{Middle East Technical University
+Department of Mechanical Engineering
+\\ME 489-Applied Scientific Programming
+Fall 2023
+\\Homework 5 }
+
+\author{Muhammed Furkan Çanga 2168938 & Bertan ÖZBAY 2378545}
+\date{7.01.2024}
+\geometry{margin=2cm} % Adjust page margins if needed
+
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+In this paper, we provide a side-by-side comparison of two different approaches to solving the $2 \mathrm{D}$ wave equation. While the second implementation takes a serial approach and depends on a single processor, the first implementation uses the Message Passing Interface (MPI) for parallelization, allowing the solution to be distributed across multiple processors.
+
+This comparative analysis's main objective is to evaluate how well these two implementations perform in terms of a number of metrics, such as the amount of time the parallelized solver takes under various configurations with varying mesh resolutions and processor counts. To further understand the effectiveness of the parallel implementation as the mesh resolution changes, we will also perform a thorough scaling analysis.
+
+\section{Implementation Details}
+\subsection{MPI-Based Solution}
+A parallel implementation of a 2D wave equation solver using MPI (Message Passing Interface) is presented in the code file wave2d\_mpi.c. With predetermined boundary and initial conditions, the solver discretizes the wave equation in both space and time through numerical solution. By using domain decomposition, the code partitions the global problem into more manageable subproblems that are dispersed throughout several MPI processes. At each time step, the solver updates the solution using a second-order central differencing scheme, incorporating communication between MPI ranks to effectively handle boundaries.
+
+The start and finish times, time step size, domain boundaries, and wave speed constant are among the input parameters that the program reads from a file. It starts by initializing the solution field with a precise solution and then gradually modifies the system. The program generates solutions on a regular basis and calculates the $L^{\infty}$ norm of the error in relation to the final time exact solution.
+
+\subsection{Serial Solution}
+The other code called as wave2d\_serial.c is a serial implementation of a second-order central differencing scheme-based 2D wave equation solver in both space and time. The wave equation is numerically solved by the solver discretizing it over an $\mathrm{x}$ - and $\mathrm{y}$-dimensional grid with predetermined boundary and initial conditions. It initializes the solution field using an exact solution, reads input parameters from a file, and iteratively updates the solution at each time step.
+
+Boundary conditions are applied, the solution field is updated via central differencing, and the solution is output at predetermined intervals as part of the main program structure. In addition, the solver compares the numerical solution to the precise solution by computing and reporting the $L_{\infty}$ norm of the error at the end.
+
+\section{Results}
+We must compute the efficiency and speedup for various processor counts and mesh resolutions in order to perform a strong scaling analysis. The ratio of serial to parallel time is known as the speedup $(\mathrm{S})$, and the speedup normalized by the number of processors is known as the efficiency (E). These metrics shed light on how well the parallel implementation scales with an increase in processor power.
+
+$\mathrm{n}=$ Number of Processors
+
+Speedup(S) = Serial Time/MPI Time
+
+Efficiency $(\mathrm{E})=\mathrm{S} / \mathrm{N}$
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|*{7}{l|}}
+        \hline
+        Mesh & \makecell[l]{Serial \\ Time $(\mathrm{s})$} & \makecell[l]{MPI \\ $(\mathrm{n}=2)$ \\ Time $(\mathrm{s})$} & \makecell[l]{MPI \\ $(\mathrm{n}=4)$ \\ Time $(\mathrm{s})$} & Speedup & \makecell[l]{Efficiency \\ $(\mathrm{n}=2)$} & \makecell[l]{Speedup \\ $(\mathrm{n}=4)$} & \makecell[l]{Efficiency \\ $(\mathrm{n}=4)$} \\
+        \hline
+        $51 \times 51$ & 10.751 & 9.882 & 9.322 & 1.089 & 0.545 & 1.155 & 0.289 \\
+        \hline
+        $101 \times 101$ & 13.764 & 11.896 & 10.485 & 1.155 & 0.577 & 1.311 & 0.328 \\
+        \hline
+        $201 \times 201$ & 57.869 & 54.219 & 49.845 & 1.067 & 0.533 & 1.161 & 0.290 \\
+        \hline
+        $401 \times 401$ & 260.154 & 232.230 & 210.427 & 1.121 & 0.561 & 1.235 & 0.309 \\
+        \hline
+    \end{tabular}
+    \caption{Your table caption here.}
+    \label{tab:yourtablelabel}
+\end{table}
+
+Table 1 Results of Mesh vs Time for Different Configurations
+
+\subsection{Speedup Analysis}
+Speedup measures the relative performance improvement achieved by parallel execution compared to a serial execution. A speedup greater than 1 indicates improvement.For the $51 \times 51$ mesh, the twoprocessor execution achieves a speedup of approximately 1.089, indicating a slight improvement over the serial execution. As the mesh resolution increases, the speedup values for both two and four processors vary, showcasing how parallel efficiency is influenced by problem size.
+
+\subsection{Efficiency Analysis}
+Efficiency measures how effectively parallel resources are utilized.Values close to 1 suggest good scalability, while values below 1 indicate diminishing returns. The efficiency for the $51 \times 51$ mesh with two processors is 0.545 , indicating that each processor contributes only about half of the ideal \href{http://speedup.As}{speedup.As} the mesh resolution increases, the efficiency tends to decrease. For example, with four processors and a $401 \times 401$ mesh, the efficiency is 0.309 , suggesting diminishing returns on additional processors.
+
+\subsection{Mesh Resolution Impact}
+The impact of mesh resolution on parallel speedup is evident. As the problem size increases (e.g., from $51 \times 51$ to $401 \times 401$ ), the speedup tends to increase. The results shows that higher resolutions emphasize the importance of balancing problem size and available computational resources. Most probably it will be optimized with cost or physical constraint at some point.
+
+\subsection{Processor Scaling}
+The efficiency with four processors is generally lower than with two processors, indicating suboptimal scaling for the given problem sizes. The diminishing returns suggest that the parallelization strategy may need adjustment or that the problem size is not well-suited for the chosen number of processors.
+
+\section{Conclusion}
+Those observations provide a more nuanced understanding of the strong scaling behavior of the parallelized $2 \mathrm{D}$ wave equation solver. We can consider experimenting with different parallelization strategies or algorithms to optimize performance for larger problem sizes. Furthermore, we can evaluate the impact of communication overhead and load balancing, as these factors can significantly affect parallel efficiency. Moreover,we can conduct additional tests with varying numbers of processors to identify the optimal configuration for the specific problem and hardware.
+
+
+\end{document}
