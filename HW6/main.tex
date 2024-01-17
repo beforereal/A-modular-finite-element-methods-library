@@ -1,0 +1,41 @@
+\documentclass{article}
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\title{ME489 Homework 6}
+\author{Bertan Özbay Furkan Çanga}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+In Homework 6, we are required to implement an already serially implemented Mandelbrot set to CUDA kernel. 
+
+\section{CUDA Parallelization}
+Fistly, we have added CUDA headers in order to programm in GPU. Secondly, we have defined CUDA kernel and thread indices "blockIdx and threadIdx". Then memory allocation is implemented using "cudaMalloc" command. As we have allocated enough memory, we have copied necessary data to GPU using "cudaMemcpy". After that, we have launched "mandelbrotKernal" on GPU using a specified grid and block size " blockIdx and threadIdx". For measuring elapsed time we have utilized "cudaEvent" then printed it as an output. Then the finalized data is copied back to CPU in order to print the resulting image.
+
+\section{Results}
+Only comparison will be between serial and CUDA kernel's timings. This is due to the fact that their output give perfectly equal results, however only difference is in elapsed timings. As CUDA kernel has performed the same task in significantly smaller time periods.
+Please note that Serial implementation is measured in seconds whereas CUDA kernel implementation is measured in miliseconds.
+
+\begin{table}[ht]
+  \centering
+  \begin{tabular}{|c|c|c|c|c|}
+    \hline
+    \textbf{Implementation} & \textbf{4096x4096} & \textbf{2048x2048} & \textbf{1024x1024} & \textbf{512x512} \\
+    \hline
+    Serial (s)& 13.356217 & 3.405635 & 0.801557 & 0.215580 \\
+    \hline
+    CUDA Kernel (ms) & 425.800934 & 171.104156 & 48.216385 & 13.654944 \\
+    \hline
+  \end{tabular}
+  \caption{Elapsed Time Comparison for Serial and CUDA Kernel Implementations at Different Resolutions}
+  \label{tab:elapsed_time}
+\end{table}
+\section{Conclusion and Summary of findings}
+As it can be seen from Table 1, it is evident that CUDA kernel implementation is far more superior when compared to stnadard serial one. Only for really small (smaller than 512 512) image resolutions, these two different implementations will give similar results. However, as the resolution gets bigger (4096 4096) the time difference will be much higher. For implementations that have heavy-lengthy computation processes, our recommendation would be to use CUDA kernel to get faster and consequently more efficient results.
+
+\end{document}
